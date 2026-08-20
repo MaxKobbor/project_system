@@ -1,0 +1,169 @@
+body {
+    font-family: 'Sarabun', 'myFirstFont', sans-serif;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* สไตล์สำหรับ Header */
+.custom-header {
+    background: linear-gradient(90deg, #3EBCFF 0%, #AEE3FF 100%);
+    padding: 15px 25px;
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.custom-header h1,
+.custom-header p {
+    color: #ffffff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* สไตล์โลโก้วงกลม */
+.header-logo {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #ffffff;
+    border: 2px solid #a71e16;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.welcome-title {
+    display: inline-block;
+    border-bottom: 2px solid #333333;
+    padding-bottom: 4px;
+    color: #000000;
+}
+
+/* สไตล์การ์ดเมนู */
+.menu-card {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    /* ปรับความมนของการ์ดให้ใกล้เคียงรูปมากขึ้น */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: #333333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    height: 220px;
+}
+
+.menu-card:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+    transform: translateY(-5px);
+    color: #000000;
+}
+
+.menu-card img {
+    max-height: 110px;
+    object-fit: contain;
+    margin-bottom: 15px;
+}
+
+/* สไตล์ Footer */
+footer {
+    background-color: #cccccc;
+    color: #ffffff;
+    padding: 15px 30px;
+}
+
+.footer-content {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* ================= สไตล์สำหรับป๊อปอัป (Modal) แบบปรับแต่งเฉพาะ ================= */
+
+/* ตัวกล่อง Modal */
+.custom-modal-content {
+    border: none;
+    border-radius: 16px;
+    /* ปรับให้ขอบมนสวยงามสไตล์ Modern */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    /* เพิ่มเงานุ่มๆ ให้ดูลอยออกมา */
+    overflow: hidden;
+}
+
+/* หัวข้อ Modal (ไล่เฉดสีฟ้าเดียวกับ Header ของเว็บ) */
+.custom-modal-header {
+    background: linear-gradient(135deg, #5eb2ff 0%, #42b6f5 100%);
+    border-bottom: none;
+    padding: 18px 24px;
+}
+
+.custom-modal-header .modal-title {
+    font-size: 1.15rem;
+    letter-spacing: 0.5px;
+}
+
+/* ข้อความ Label ด้านใน */
+.custom-form-label {
+    font-weight: 500;
+    color: #444444;
+    font-size: 0.95rem;
+}
+
+/* กล่องข้อความกรอกข้อมูล (Input) */
+.custom-input {
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    transition: all 0.25s ease;
+}
+
+/* เมื่อคลิกเลือกกล่องข้อมูล (Focus) */
+.custom-input:focus {
+    border-color: #42b6f5;
+    box-shadow: 0 0 0 3px rgba(66, 182, 245, 0.2);
+    /* เพิ่มแสงเรืองรองสีฟ้า */
+}
+
+/* ปุ่มยกเลิก */
+.btn-cancel {
+    background-color: #ececec;
+    color: #555555;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+    background-color: #e0e0e0;
+    color: #333333;
+}
+
+/* ปุ่มเข้าสู่ระบบแบบมี Gradient */
+.btn-submit {
+    background: linear-gradient(135deg, #42b6f5 0%, #359ad1 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 24px;
+    font-weight: 500;
+    box-shadow: 0 4px 10px rgba(66, 182, 245, 0.3);
+    transition: all 0.2s;
+}
+
+.btn-submit:hover {
+    background: linear-gradient(135deg, #359ad1 0%, #2884b6 100%);
+    color: #ffffff;
+    box-shadow: 0 6px 14px rgba(66, 182, 245, 0.4);
+    transform: translateY(-1px);
+}

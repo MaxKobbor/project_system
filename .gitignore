@@ -1,0 +1,17 @@
+# Config
+config/
+
+# SQL
+*.sql
+
+# Docker Compose
+docker-compose.yml
+
+# Uploads
+uploads/
+
+# Dockerfile
+Dockerfile
+
+# .me
+.me

@@ -1,0 +1,57 @@
+body {
+    font-family: 'Sarabun', 'myFirstFont', sans-serif;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* สไตล์สำหรับ Header ใหม่ (ไล่สีฟ้า-น้ำเงิน) */
+.custom-header {
+    background: linear-gradient(180deg, #5eb2ff 0%, #c4e4ff 100%);
+    padding: 15px 25px;
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.custom-header h1,
+.custom-header p {
+    color: #ffffff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+    /* เพิ่มเงาให้ตัวหนังสืออ่านง่ายขึ้น */
+}
+
+/* พื้นที่ด้านล่าง header: sidebar + เนื้อหาหลัก เรียงกันแบบ flex
+   ทำให้เนื้อหาหลักไม่ถูก sidebar ทับ และขยับตามเมื่อ sidebar ถูกย่อ */
+.app-layout {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 24px;
+}
+
+.app-layout > nav {
+    flex: 0 0 auto;
+}
+
+.main-content {
+    flex: 1 1 auto;
+    min-width: 0;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgb(0 0 0 / 8%);
+    padding: 24px;
+    height: 85vh;
+    overflow-y: auto;
+}
+
+/* สไตล์โลโก้วงกลม */
+.header-logo {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #ffffff;
+    border: 2px solid #a71e16;
+}

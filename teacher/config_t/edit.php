@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit-teacher'])) {
 
     if (empty($teacher_id) || empty($full_name) || empty($username)) {
         $_SESSION['error'] = "กรุณากรอกข้อมูลสำคัญให้ครบถ้วน";
-        header("Location: ../index.php");
+        header("Location: ../hod/manage_teachers.php");
         exit();
     }
 
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit-teacher'])) {
 
             if (!$teacher) {
                 $_SESSION['error'] = "ไม่พบข้อมูลครูที่ต้องการแก้ไข";
-                header("Location: ../index.php");
+                header("Location: ../hod/manage_teachers.php");
                 exit();
             }
 
@@ -53,12 +53,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit-teacher'])) {
                         $is_new_image_uploaded = true;
                     } else {
                         $_SESSION['error'] = "ไม่สามารถย้ายไฟล์รูปภาพใหม่ได้";
-                        header("Location: ../index.php");
+                        header("Location: ../hod/manage_teachers.php");
                         exit();
                     }
                 } else {
                     $_SESSION['error'] = "อนุญาตเฉพาะไฟล์รูปภาพ (JPG, PNG, WEBP) เท่านั้น";
-                    header("Location: ../index.php");
+                    header("Location: ../hod/manage_teachers.php");
                     exit();
                 }
             }
@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit-teacher'])) {
             }
 
             $_SESSION['success'] = "แก้ไขข้อมูลครูเรียบร้อยแล้ว";
-            header("Location: ../index.php");
+            header("Location: ../hod/manage_teachers.php");
             exit();
 
         } catch (PDOException $e) {
@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit-teacher'])) {
                 unlink("../../uploads/teachers/" . $new_image_name);
             }
             $_SESSION['error'] = "เกิดข้อผิดพลาดของระบบฐานข้อมูล";
-            header("Location: ../index.php");
+            header("Location: ../hod/manage_teachers.php");
             exit();
         }
     }

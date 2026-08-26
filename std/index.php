@@ -30,23 +30,30 @@ $subStmt = $pdo->prepare("SELECT s.*, a.assignment_name
 $subStmt->execute([$group_id]);
 $submissions = $subStmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Resolve academic year
+$year_id = $group['year_id'] ?? null;
+if (empty($year_id)) {
+    $activeYearStmt = $pdo->query("SELECT year_id FROM `academic_years` WHERE status = 1 ORDER BY year_name DESC LIMIT 1");
+    $year_id = $activeYearStmt ? ($activeYearStmt->fetchColumn() ?: 0) : 0;
+}
+
 // Check if any assignments are open but not submitted
 $assignStmt = $pdo->prepare("SELECT a.* 
                              FROM `assignments` a
                              LEFT JOIN `submissions` s ON a.assignment_id = s.assignment_id AND s.group_id = ?
                              WHERE a.status = 1 AND a.year_id = ? AND s.submission_id IS NULL");
-$assignStmt->execute([$group_id, $group['year_id'] ?? 11]);
+$assignStmt->execute([$group_id, $year_id]);
 $pending_assignments = $assignStmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Calculate Progress
 $totalAssignStmt = $pdo->prepare("SELECT COUNT(*) FROM `assignments` WHERE year_id = ?");
-$totalAssignStmt->execute([$group['year_id'] ?? 11]);
+$totalAssignStmt->execute([$year_id]);
 $total_assignments = $totalAssignStmt->fetchColumn();
 
 $completedAssignStmt = $pdo->prepare("SELECT COUNT(*) FROM `submissions` s 
                                       JOIN `assignments` a ON s.assignment_id = a.assignment_id 
                                       WHERE s.group_id = ? AND a.year_id = ? AND s.status_1 = 1");
-$completedAssignStmt->execute([$group_id, $group['year_id'] ?? 11]);
+$completedAssignStmt->execute([$group_id, $year_id]);
 $completed_assignments = $completedAssignStmt->fetchColumn();
 
 $progress_percent = $total_assignments > 0 ? round(($completed_assignments / $total_assignments) * 100) : 0;

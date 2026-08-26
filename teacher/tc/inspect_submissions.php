@@ -14,7 +14,15 @@ $assignments = $assignmentStmt->fetchAll(PDO::FETCH_ASSOC);
 // Filters
 $search = trim($_GET['search'] ?? '');
 $assignmentFilter = isset($_GET['assignment_id']) && $_GET['assignment_id'] !== '' ? intval($_GET['assignment_id']) : null;
-$statusFilter = isset($_GET['status_1']) && $_GET['status_1'] !== '' ? intval($_GET['status_1']) : null;
+
+// Default status_1 to 0 (รอตรวจ) if not specified
+if (!isset($_GET['status_1'])) {
+    $statusFilter = 0; // ค่าเริ่มต้น: รอตรวจ
+} elseif ($_GET['status_1'] === 'all' || $_GET['status_1'] === '') {
+    $statusFilter = null; // ทั้งหมด
+} else {
+    $statusFilter = intval($_GET['status_1']);
+}
 
 $query = "SELECT s.*, g.username AS group_name, g.project_name, a.assignment_name, c.class_name
           FROM `submissions` s
@@ -53,6 +61,20 @@ $stmt = $pdo->prepare($query);
 $stmt->execute($params);
 $submissions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Fetch counts for filter badges
+$countStmt = $pdo->prepare("
+    SELECT 
+        COUNT(*) as total_count,
+        COALESCE(SUM(CASE WHEN s.status_1 = 0 OR s.status_1 IS NULL THEN 1 ELSE 0 END), 0) as pending_count,
+        COALESCE(SUM(CASE WHEN s.status_1 = 1 THEN 1 ELSE 0 END), 0) as passed_count,
+        COALESCE(SUM(CASE WHEN s.status_1 = 2 THEN 1 ELSE 0 END), 0) as returned_count
+    FROM `submissions` s
+    JOIN `groups` g ON s.group_id = g.group_id
+    WHERE g.teacher_id = ?
+");
+$countStmt->execute([$teacher_id]);
+$counts = $countStmt->fetch(PDO::FETCH_ASSOC) ?: ['total_count' => 0, 'pending_count' => 0, 'passed_count' => 0, 'returned_count' => 0];
+
 // Session message
 $message = $_SESSION['msg'] ?? '';
 $messageType = $_SESSION['msg_type'] ?? '';
@@ -77,32 +99,10 @@ function highlightText($text, $search) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../admin/header.css">
-    <link rel="stylesheet" href="../../admin/nav.css">
-    <link rel="stylesheet" href="../../admin/manage.css">
+    <link rel="stylesheet" href="header.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="nav.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="manage.css?v=<?= time() ?>">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        .btn-inspect {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 18px;
-            border: none;
-            border-radius: 8px;
-            background: #ff9800;
-            color: #fff;
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .btn-inspect:hover {
-            background: #e68a00;
-        }
-        .modal-box {
-            max-width: 500px;
-        }
-    </style>
 </head>
 
 <body>
@@ -134,6 +134,8 @@ function highlightText($text, $search) {
                         <?php endif; ?>
                         <?php if ($statusFilter !== null): ?>
                             <input type="hidden" name="status_1" value="<?= $statusFilter ?>">
+                        <?php else: ?>
+                            <input type="hidden" name="status_1" value="all">
                         <?php endif; ?>
                         <input type="text" name="search" placeholder="ค้นหากลุ่ม, โครงงาน, ไฟล์" value="<?= htmlspecialchars($search) ?>">
                         <button type="submit"><i data-lucide="search" style="width:18px;height:18px;"></i></button>
@@ -151,6 +153,8 @@ function highlightText($text, $search) {
                                 <?php endif; ?>
                                 <?php if ($statusFilter !== null): ?>
                                     <input type="hidden" name="status_1" value="<?= $statusFilter ?>">
+                                <?php else: ?>
+                                    <input type="hidden" name="status_1" value="all">
                                 <?php endif; ?>
                                 <select name="assignment_id" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
                                     <option value="">-- ทั้งหมดทุกหัวข้องาน --</option>
@@ -162,11 +166,23 @@ function highlightText($text, $search) {
                                 </select>
                             </form>
                         </div>
-                        <div class="col-md-6 d-flex justify-content-md-end gap-2">
-                            <a href="inspect_submissions.php?<?= http_build_query(array_merge($_GET, ['status_1' => ''])) ?>" class="filter-btn <?= $statusFilter === null ? 'active' : '' ?>">ทั้งหมด</a>
-                            <a href="inspect_submissions.php?<?= http_build_query(array_merge($_GET, ['status_1' => '0'])) ?>" class="filter-btn <?= $statusFilter === 0 ? 'active' : '' ?>">รอตรวจ</a>
-                            <a href="inspect_submissions.php?<?= http_build_query(array_merge($_GET, ['status_1' => '1'])) ?>" class="filter-btn <?= $statusFilter === 1 ? 'active' : '' ?>">ผ่านแล้ว</a>
-                            <a href="inspect_submissions.php?<?= http_build_query(array_merge($_GET, ['status_1' => '2'])) ?>" class="filter-btn <?= $statusFilter === 2 ? 'active' : '' ?>">ตีกลับแก้</a>
+                        <div class="col-md-6 d-flex justify-content-md-end gap-2 flex-wrap filter-nav">
+                            <a href="inspect_submissions.php?<?= http_build_query(array_merge($_GET, ['status_1' => 'all'])) ?>" class="filter-btn <?= $statusFilter === null ? 'active' : '' ?>">
+                                <i data-lucide="layers" style="width:15px;height:15px;"></i> ทั้งหมด
+                                <span class="filter-badge"><?= intval($counts['total_count']) ?></span>
+                            </a>
+                            <a href="inspect_submissions.php?<?= http_build_query(array_merge($_GET, ['status_1' => '0'])) ?>" class="filter-btn btn-pending <?= $statusFilter === 0 ? 'active' : '' ?>">
+                                <i data-lucide="clock" style="width:15px;height:15px;"></i> รอตรวจ
+                                <span class="filter-badge"><?= intval($counts['pending_count']) ?></span>
+                            </a>
+                            <a href="inspect_submissions.php?<?= http_build_query(array_merge($_GET, ['status_1' => '1'])) ?>" class="filter-btn btn-passed <?= $statusFilter === 1 ? 'active' : '' ?>">
+                                <i data-lucide="check-circle" style="width:15px;height:15px;"></i> ผ่านแล้ว
+                                <span class="filter-badge"><?= intval($counts['passed_count']) ?></span>
+                            </a>
+                            <a href="inspect_submissions.php?<?= http_build_query(array_merge($_GET, ['status_1' => '2'])) ?>" class="filter-btn btn-returned <?= $statusFilter === 2 ? 'active' : '' ?>">
+                                <i data-lucide="x-circle" style="width:15px;height:15px;"></i> ตีกลับแก้
+                                <span class="filter-badge"><?= intval($counts['returned_count']) ?></span>
+                            </a>
                         </div>
                     </div>
 
@@ -222,13 +238,31 @@ function highlightText($text, $search) {
                                 <div class="manage-item-actions flex-column align-items-end gap-2">
                                     <?php if ($sub['status_1'] == 1): ?>
                                         <span class="badge bg-success p-2 mb-1" style="font-size:0.85rem;"><i data-lucide="check-circle" style="width:14px;height:14px;display:inline;"></i> ตรวจผ่านแล้ว</span>
-                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="openInspectModal(<?= $sub['submission_id'] ?>, '<?= htmlspecialchars($sub['group_name'], ENT_QUOTES) ?>', '<?= htmlspecialchars($sub['assignment_name'], ENT_QUOTES) ?>', <?= $sub['status_1'] ?? 0 ?>, '<?= htmlspecialchars(str_replace(array("\r", "\n"), array('\r', '\n'), $sub['teacher_comment'] ?? ''), ENT_QUOTES) ?>')">แก้ไขผลตรวจ</button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                            data-sub-id="<?= $sub['submission_id'] ?>"
+                                            data-group-name="<?= htmlspecialchars($sub['group_name'] ?? '') ?>"
+                                            data-assignment-name="<?= htmlspecialchars($sub['assignment_name'] ?? '') ?>"
+                                            data-status="<?= $sub['status_1'] ?? 0 ?>"
+                                            data-comment="<?= htmlspecialchars($sub['teacher_comment'] ?? '') ?>"
+                                            onclick="openInspectModalFromBtn(this)">แก้ไขผลตรวจ</button>
                                     <?php elseif ($sub['status_1'] == 2): ?>
                                         <span class="badge bg-danger p-2 mb-1" style="font-size:0.85rem;"><i data-lucide="x-circle" style="width:14px;height:14px;display:inline;"></i> ตีกลับแก้ไข</span>
-                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="openInspectModal(<?= $sub['submission_id'] ?>, '<?= htmlspecialchars($sub['group_name'], ENT_QUOTES) ?>', '<?= htmlspecialchars($sub['assignment_name'], ENT_QUOTES) ?>', <?= $sub['status_1'] ?? 0 ?>, '<?= htmlspecialchars(str_replace(array("\r", "\n"), array('\r', '\n'), $sub['teacher_comment'] ?? ''), ENT_QUOTES) ?>')">แก้ไขผลตรวจ</button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                            data-sub-id="<?= $sub['submission_id'] ?>"
+                                            data-group-name="<?= htmlspecialchars($sub['group_name'] ?? '') ?>"
+                                            data-assignment-name="<?= htmlspecialchars($sub['assignment_name'] ?? '') ?>"
+                                            data-status="<?= $sub['status_1'] ?? 0 ?>"
+                                            data-comment="<?= htmlspecialchars($sub['teacher_comment'] ?? '') ?>"
+                                            onclick="openInspectModalFromBtn(this)">แก้ไขผลตรวจ</button>
                                     <?php else: ?>
                                         <span class="badge bg-warning text-dark p-2 mb-1" style="font-size:0.85rem;"><i data-lucide="clock" style="width:14px;height:14px;display:inline;"></i> รอตรวจงาน</span>
-                                        <button type="button" class="btn-inspect" onclick="openInspectModal(<?= $sub['submission_id'] ?>, '<?= htmlspecialchars($sub['group_name'], ENT_QUOTES) ?>', '<?= htmlspecialchars($sub['assignment_name'], ENT_QUOTES) ?>', 0, '')">
+                                        <button type="button" class="btn-inspect"
+                                            data-sub-id="<?= $sub['submission_id'] ?>"
+                                            data-group-name="<?= htmlspecialchars($sub['group_name'] ?? '') ?>"
+                                            data-assignment-name="<?= htmlspecialchars($sub['assignment_name'] ?? '') ?>"
+                                            data-status="0"
+                                            data-comment=""
+                                            onclick="openInspectModalFromBtn(this)">
                                             <i data-lucide="file-check-2" style="width:16px;height:16px;"></i> ตรวจงาน
                                         </button>
                                     <?php endif; ?>
@@ -321,17 +355,20 @@ function highlightText($text, $search) {
             }
         }
 
+        function openInspectModalFromBtn(btn) {
+            const subId = btn.dataset.subId;
+            const groupName = btn.dataset.groupName;
+            const assignmentName = btn.dataset.assignmentName;
+            const status = parseInt(btn.dataset.status) || 0;
+            const comment = btn.dataset.comment || '';
+            openInspectModal(subId, groupName, assignmentName, status, comment);
+        }
+
         function openInspectModal(subId, groupName, assignmentName, status, comment) {
             document.getElementById('inspectSubmissionId').value = subId;
             document.getElementById('modalGroupName').textContent = groupName;
             document.getElementById('modalAssignmentName').textContent = assignmentName;
-            
-            // Handle newlines in JS correctly
-            let cleanComment = comment;
-            if (comment) {
-                cleanComment = comment.replace(/\\r\\n/g, "\n").replace(/\\n/g, "\n").replace(/\\r/g, "\n");
-            }
-            document.getElementById('teacherComment').value = cleanComment;
+            document.getElementById('teacherComment').value = comment || '';
 
             if (status == 1) {
                 document.getElementById('statusPass').checked = true;

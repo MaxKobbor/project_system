@@ -60,7 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="includes/style.css">
     <link rel="stylesheet" href="header.css">
     <link rel="stylesheet" href="nav.css">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -70,7 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             padding: 30px;
-            width: 30%;
+            max-width: 650px;
+            width: 100%;
             margin: 0 auto;
         }
 

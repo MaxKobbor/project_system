@@ -20,7 +20,16 @@ $statusFilter = isset($_GET['status']) && $_GET['status'] !== '' ? intval($_GET[
 // Fetch filter options
 $years = $pdo->query("SELECT * FROM academic_years ORDER BY year_name DESC")->fetchAll(PDO::FETCH_ASSOC);
 $branches = $pdo->query("SELECT * FROM branches ORDER BY branch_name ASC")->fetchAll(PDO::FETCH_ASSOC);
-$rooms = $pdo->query("SELECT * FROM classrooms ORDER BY class_name ASC")->fetchAll(PDO::FETCH_ASSOC);
+
+// If branch is selected, fetch rooms for that branch; otherwise require branch selection first
+if ($branchFilter !== null) {
+    $roomStmt = $pdo->prepare("SELECT * FROM classrooms WHERE branch_id = ? ORDER BY class_name ASC");
+    $roomStmt->execute([$branchFilter]);
+    $rooms = $roomStmt->fetchAll(PDO::FETCH_ASSOC);
+} else {
+    $rooms = [];
+    $classFilter = null;
+}
 
 $query = "SELECT g.*, t.full_name AS teacher_name, c.class_name, b.branch_name, y.year_name AS year
           FROM `groups` g
@@ -83,9 +92,9 @@ function highlightText($text, $search)
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../admin/header.css">
-    <link rel="stylesheet" href="../../admin/nav.css">
-    <link rel="stylesheet" href="../../admin/manage.css">
+    <link rel="stylesheet" href="header.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="nav.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="manage.css?v=<?= time() ?>">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         .group-pill {
@@ -160,7 +169,7 @@ function highlightText($text, $search)
                             </select>
                         </div>
                         <div class="col-12 col-md-auto">
-                            <select name="branch_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <select name="branch_id" class="form-select form-select-sm" onchange="const classEl = this.form.querySelector('select[name=class_id]'); if(classEl) classEl.value=''; this.form.submit()">
                                 <option value="">-- สาขา --</option>
                                 <?php foreach ($branches as $b): ?>
                                     <option value="<?= $b['branch_id'] ?>" <?= $branchFilter === intval($b['branch_id']) ? 'selected' : '' ?>><?= htmlspecialchars($b['branch_name']) ?></option>
@@ -168,8 +177,8 @@ function highlightText($text, $search)
                             </select>
                         </div>
                         <div class="col-12 col-md-auto">
-                            <select name="class_id" class="form-select form-select-sm" onchange="this.form.submit()">
-                                <option value="">-- ห้อง --</option>
+                            <select name="class_id" class="form-select form-select-sm" onchange="this.form.submit()" <?= $branchFilter === null ? 'disabled' : '' ?>>
+                                <option value=""><?= $branchFilter === null ? '-- กรุณาเลือกสาขาก่อน --' : '-- ทุกห้อง --' ?></option>
                                 <?php foreach ($rooms as $r): ?>
                                     <option value="<?= $r['class_id'] ?>" <?= $classFilter === intval($r['class_id']) ? 'selected' : '' ?>><?= htmlspecialchars($r['class_name']) ?></option>
                                 <?php endforeach; ?>

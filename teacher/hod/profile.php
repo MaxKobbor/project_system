@@ -1,11 +1,9 @@
 <?php
-include_once '../../config/db.php';
-session_start();
+require_once '../../config/db.php';
+require_once '../config_t/auth_check.php';
 
-if (!isset($_SESSION['teacher_id'])) {
-    header("Location: ../../login.php");
-    exit();
-}
+// Verify HOD access
+check_teacher_auth(0);
 
 $teacher_id = $_SESSION['teacher_id'];
 
@@ -54,8 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="header.css">
-    <link rel="stylesheet" href="nav.css">
+    <link rel="stylesheet" href="header.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="nav.css?v=<?= time() ?>">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         .profile-card {

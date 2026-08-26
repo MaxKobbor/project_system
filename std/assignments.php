@@ -18,8 +18,12 @@ $stmt = $pdo->prepare("SELECT g.status, c.year_id
 $stmt->execute([$group_id]);
 $group = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$group_status = $group['status'];
-$year_id = $group['year_id'] ?? 11;
+$group_status = $group['status'] ?? 0;
+$year_id = $group['year_id'] ?? null;
+if (empty($year_id)) {
+    $activeYearStmt = $pdo->query("SELECT year_id FROM `academic_years` WHERE status = 1 ORDER BY year_name DESC LIMIT 1");
+    $year_id = $activeYearStmt ? ($activeYearStmt->fetchColumn() ?: 0) : 0;
+}
 
 // Get all assignments for this year
 $assignStmt = $pdo->prepare("

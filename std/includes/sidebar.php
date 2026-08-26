@@ -29,7 +29,7 @@
                     <i data-lucide="user-cog"></i>
                     <span>แก้ไขข้อมูลตัวเอง</span>
                 </a>
-                <a href="../login.php" class="logout-btn" id="logoutBtn" style="text-decoration:none;">
+                <a href="config_s/logout.php?logout=1" class="logout-btn" id="logoutBtn" style="text-decoration:none;">
                     <i data-lucide="log-out"></i>
                     <span>ออกจากระบบ</span>
                 </a>

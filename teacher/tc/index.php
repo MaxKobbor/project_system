@@ -47,9 +47,9 @@ if (isset($pdo)) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../admin/header.css">
-    <link rel="stylesheet" href="../../admin/nav.css">
-    <link rel="stylesheet" href="../../admin/manage.css">
+    <link rel="stylesheet" href="header.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="nav.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="manage.css?v=<?= time() ?>">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
@@ -70,7 +70,7 @@ if (isset($pdo)) {
                 <div class="col-12 col-md-6 col-lg-3">
                     <a href="manage_groups.php" class="stat-card-link">
                         <div class="stat-card">
-                            <div class="stat-card-inner">
+                            <div class=stat-card-inner>
                                 <div class="stat-info">
                                     <h3 class="stat-title">กลุ่มในปรึกษา</h3>
                                     <p class="stat-subtitle">กลุ่มนักเรียนที่ดูแล</p>
@@ -84,7 +84,7 @@ if (isset($pdo)) {
                 <div class="col-12 col-md-6 col-lg-3">
                     <a href="inspect_submissions.php" class="stat-card-link">
                         <div class="stat-card">
-                            <div class="stat-card-inner">
+                            <div class=stat-card-inner>
                                 <div class="stat-info">
                                     <h3 class="stat-title">รอตรวจงาน</h3>
                                     <p class="stat-subtitle">งานนักเรียนรอการตรวจ</p>
@@ -98,7 +98,7 @@ if (isset($pdo)) {
                 <div class="col-12 col-md-6 col-lg-3">
                     <a href="inspect_submissions.php" class="stat-card-link">
                         <div class="stat-card">
-                            <div class="stat-card-inner">
+                            <div class=stat-card-inner>
                                 <div class="stat-info">
                                     <h3 class="stat-title">ตรวจผ่านแล้ว</h3>
                                     <p class="stat-subtitle">งานที่อนุมัติเรียบร้อย</p>
@@ -112,7 +112,7 @@ if (isset($pdo)) {
                 <div class="col-12 col-md-6 col-lg-3">
                     <a href="manage_groups.php" class="stat-card-link">
                         <div class="stat-card">
-                            <div class="stat-card-inner">
+                            <div class=stat-card-inner>
                                 <div class="stat-info">
                                     <h3 class="stat-title">กลุ่มนักเรียนทั้งหมด</h3>
                                     <p class="stat-subtitle">ทุกกลุ่มในแผนก</p>

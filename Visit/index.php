@@ -134,9 +134,11 @@ $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         /* Main content */
         .visit-main {
-            width: 75%;
+            width: 100%;
+            max-width: 1100px;
             margin: 0 auto;
             padding: 30px 20px;
+            box-sizing: border-box;
         }
 
         /* Title bar */

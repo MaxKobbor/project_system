@@ -64,7 +64,7 @@ function highlightText($text, $search)
 <html lang="th">
 
 <head>
-    <link rel="icon" type="image/png" href="../../img/new_logo_svc_temp.png">
+    <link rel="icon" type="image/png" href="../img/new_logo_svc_temp.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ดูงานที่นักเรียนส่งมา - สำหรับผู้ดูแลระบบ (Read-Only)</title>

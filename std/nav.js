@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
           fontFamily: 'Sarabun'
         }).then((result) => {
           if (result.isConfirmed) {
-            window.location.href = logoutBtn.tagName === 'A' && logoutBtn.href ? logoutBtn.href : "../login.php";
+            window.location.href = logoutBtn.tagName === 'A' && logoutBtn.href ? logoutBtn.href : "config_s/logout.php?logout=1";
           }
         });
       };

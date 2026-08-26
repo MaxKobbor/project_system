@@ -60,6 +60,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit();
             }
 
+            // Verify MIME type
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_file($finfo, $fileTmpPath);
+            finfo_close($finfo);
+
+            if ($mimeType !== 'application/pdf') {
+                $_SESSION['msg'] = 'ไฟล์ที่อัปโหลดไม่ใช่ไฟล์ PDF ที่ถูกต้อง';
+                $_SESSION['msg_type'] = 'error';
+                header("Location: ../assignments.php");
+                exit();
+            }
+
+            // Check file size (Max 25MB)
+            if ($_FILES['submission_file']['size'] > 25 * 1024 * 1024) {
+                $_SESSION['msg'] = 'ขนาดไฟล์ต้องไม่เกิน 25MB';
+                $_SESSION['msg_type'] = 'error';
+                header("Location: ../assignments.php");
+                exit();
+            }
+
             // Format: {assignment_id}__{group_id}.{ext}
             // ดึงข้อมูลผู้ใช้ (username) ของกลุ่ม
             $stmtUser = $pdo->prepare("SELECT username FROM `groups` WHERE group_id = ?");

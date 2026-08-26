@@ -79,9 +79,9 @@ function highlightText($text, $search) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../admin/header.css">
-    <link rel="stylesheet" href="../../admin/nav.css">
-    <link rel="stylesheet" href="../../admin/manage.css">
+    <link rel="stylesheet" href="header.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="nav.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="manage.css?v=<?= time() ?>">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         .btn-inspect {
@@ -223,13 +223,31 @@ function highlightText($text, $search) {
                                 <div class="manage-item-actions flex-column align-items-end gap-2">
                                     <?php if ($sub['status_1'] == 1): ?>
                                         <span class="badge bg-success p-2 mb-1" style="font-size:0.85rem;"><i data-lucide="check-circle" style="width:14px;height:14px;display:inline;"></i> ตรวจผ่านแล้ว</span>
-                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="openInspectModal(<?= $sub['submission_id'] ?>, '<?= htmlspecialchars($sub['group_name'], ENT_QUOTES) ?>', '<?= htmlspecialchars($sub['assignment_name'], ENT_QUOTES) ?>', <?= $sub['status_1'] ?? 0 ?>, '<?= htmlspecialchars(str_replace(array("\r", "\n"), array('\r', '\n'), $sub['teacher_comment'] ?? ''), ENT_QUOTES) ?>')">แก้ไขผลตรวจ</button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                            data-sub-id="<?= $sub['submission_id'] ?>"
+                                            data-group-name="<?= htmlspecialchars($sub['group_name'] ?? '') ?>"
+                                            data-assignment-name="<?= htmlspecialchars($sub['assignment_name'] ?? '') ?>"
+                                            data-status="<?= $sub['status_1'] ?? 0 ?>"
+                                            data-comment="<?= htmlspecialchars($sub['teacher_comment'] ?? '') ?>"
+                                            onclick="openInspectModalFromBtn(this)">แก้ไขผลตรวจ</button>
                                     <?php elseif ($sub['status_1'] == 2): ?>
                                         <span class="badge bg-danger p-2 mb-1" style="font-size:0.85rem;"><i data-lucide="x-circle" style="width:14px;height:14px;display:inline;"></i> ตีกลับแก้ไข</span>
-                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="openInspectModal(<?= $sub['submission_id'] ?>, '<?= htmlspecialchars($sub['group_name'], ENT_QUOTES) ?>', '<?= htmlspecialchars($sub['assignment_name'], ENT_QUOTES) ?>', <?= $sub['status_1'] ?? 0 ?>, '<?= htmlspecialchars(str_replace(array("\r", "\n"), array('\r', '\n'), $sub['teacher_comment'] ?? ''), ENT_QUOTES) ?>')">แก้ไขผลตรวจ</button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                            data-sub-id="<?= $sub['submission_id'] ?>"
+                                            data-group-name="<?= htmlspecialchars($sub['group_name'] ?? '') ?>"
+                                            data-assignment-name="<?= htmlspecialchars($sub['assignment_name'] ?? '') ?>"
+                                            data-status="<?= $sub['status_1'] ?? 0 ?>"
+                                            data-comment="<?= htmlspecialchars($sub['teacher_comment'] ?? '') ?>"
+                                            onclick="openInspectModalFromBtn(this)">แก้ไขผลตรวจ</button>
                                     <?php else: ?>
                                         <span class="badge bg-warning text-dark p-2 mb-1" style="font-size:0.85rem;"><i data-lucide="clock" style="width:14px;height:14px;display:inline;"></i> รอตรวจงาน</span>
-                                        <button type="button" class="btn-inspect" onclick="openInspectModal(<?= $sub['submission_id'] ?>, '<?= htmlspecialchars($sub['group_name'], ENT_QUOTES) ?>', '<?= htmlspecialchars($sub['assignment_name'], ENT_QUOTES) ?>', 0, '')">
+                                        <button type="button" class="btn-inspect"
+                                            data-sub-id="<?= $sub['submission_id'] ?>"
+                                            data-group-name="<?= htmlspecialchars($sub['group_name'] ?? '') ?>"
+                                            data-assignment-name="<?= htmlspecialchars($sub['assignment_name'] ?? '') ?>"
+                                            data-status="0"
+                                            data-comment=""
+                                            onclick="openInspectModalFromBtn(this)">
                                             <i data-lucide="file-check-2" style="width:16px;height:16px;"></i> ตรวจงาน
                                         </button>
                                     <?php endif; ?>
@@ -322,17 +340,20 @@ function highlightText($text, $search) {
             }
         }
 
+        function openInspectModalFromBtn(btn) {
+            const subId = btn.dataset.subId;
+            const groupName = btn.dataset.groupName;
+            const assignmentName = btn.dataset.assignmentName;
+            const status = parseInt(btn.dataset.status) || 0;
+            const comment = btn.dataset.comment || '';
+            openInspectModal(subId, groupName, assignmentName, status, comment);
+        }
+
         function openInspectModal(subId, groupName, assignmentName, status, comment) {
             document.getElementById('inspectSubmissionId').value = subId;
             document.getElementById('modalGroupName').textContent = groupName;
             document.getElementById('modalAssignmentName').textContent = assignmentName;
-            
-            // Handle newlines in JS correctly
-            let cleanComment = comment;
-            if (comment) {
-                cleanComment = comment.replace(/\\r\\n/g, "\n").replace(/\\n/g, "\n").replace(/\\r/g, "\n");
-            }
-            document.getElementById('teacherComment').value = cleanComment;
+            document.getElementById('teacherComment').value = comment || '';
 
             if (status == 1) {
                 document.getElementById('statusPass').checked = true;

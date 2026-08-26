@@ -16,8 +16,8 @@ $group = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $password = $_POST['password'];
-    $project_name = trim($_POST['project_name']);
+    $password = trim($_POST['password'] ?? '');
+    $project_name = trim($_POST['project_name'] ?? '');
 
     if ($group['status'] == 1) {
         if (!empty($password)) {
@@ -31,25 +31,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = "เกิดข้อผิดพลาดในการบันทึกข้อมูล";
             }
         } else {
-            $error = "กรุณากรอกรหัสผ่าน";
+            $success = "ไม่มีการเปลี่ยนแปลงข้อมูล (รหัสผ่านคงเดิม)";
         }
     } else {
-        if (!empty($password)) {
-            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-            $updateStmt = $pdo->prepare("UPDATE `groups` SET project_name = ?, password = ? WHERE group_id = ?");
-            $params = [$project_name, $hashedPassword, $group_id];
-        } else {
-            $updateStmt = $pdo->prepare("UPDATE `groups` SET project_name = ? WHERE group_id = ?");
-            $params = [$project_name, $group_id];
-        }
+        if (!empty($project_name)) {
+            if (!empty($password)) {
+                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+                $updateStmt = $pdo->prepare("UPDATE `groups` SET project_name = ?, password = ? WHERE group_id = ?");
+                $params = [$project_name, $hashedPassword, $group_id];
+            } else {
+                $updateStmt = $pdo->prepare("UPDATE `groups` SET project_name = ? WHERE group_id = ?");
+                $params = [$project_name, $group_id];
+            }
 
-        if ($updateStmt->execute($params)) {
-            $_SESSION['project_name'] = $project_name;
-            $success = "บันทึกข้อมูลเรียบร้อยแล้ว";
-            $stmt->execute([$group_id]);
-            $group = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($updateStmt->execute($params)) {
+                $_SESSION['project_name'] = $project_name;
+                $success = "บันทึกข้อมูลเรียบร้อยแล้ว";
+                $stmt->execute([$group_id]);
+                $group = $stmt->fetch(PDO::FETCH_ASSOC);
+            } else {
+                $error = "เกิดข้อผิดพลาดในการบันทึกข้อมูล";
+            }
         } else {
-            $error = "เกิดข้อผิดพลาดในการบันทึกข้อมูล";
+            $error = "กรุณาระบุชื่อโครงงาน";
         }
     }
 }

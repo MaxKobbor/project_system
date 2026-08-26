@@ -1,0 +1,532 @@
+/* ===== manage.css — สไตล์เฉพาะสำหรับระบบหัวหน้าแผนก (Teacher HOD Portal) ===== */
+
+/* ช่องค้นหา */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0;
+    margin-left: auto;
+}
+
+.search-bar input {
+    width: 220px;
+    padding: 8px 16px;
+    border: 1px solid #d0d0d0;
+    border-radius: 25px;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    background: #ffffff;
+    transition: border-color 0.2s;
+}
+
+.search-bar input:focus {
+    border-color: #61BFED;
+}
+
+.search-bar button {
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 50%;
+    background: #61BFED;
+    color: #fff;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: background 0.2s;
+    flex-shrink: 0;
+}
+
+.search-bar button:hover {
+    background: #3EBCFF;
+}
+
+/* กล่องหลัก (การ์ดเนื้อหา) */
+.manage-card {
+    background: #ffffff;
+    border: 1px solid #dcdcdc;
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+/* แถบหัวข้อสีเทา */
+.manage-card-header {
+    background: #e8e8e8;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.manage-card-header .back-btn {
+    background: none;
+    border: none;
+    color: #3EBCFF;
+    cursor: pointer;
+    font-size: 24px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s;
+    text-decoration: none;
+}
+
+.manage-card-header .back-btn:hover {
+    color: #0a8fd4;
+}
+
+.manage-card-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #333;
+}
+
+/* เนื้อหาภายในการ์ด */
+.manage-card-body {
+    padding: 20px 24px;
+    max-height: calc(100vh - 220px);
+    overflow-y: auto;
+}
+
+/* Custom Scrollbar สำหรับ manage-card-body */
+.manage-card-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.manage-card-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.manage-card-body::-webkit-scrollbar-thumb {
+    background: #bbb;
+    border-radius: 4px;
+}
+
+.manage-card-body::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+/* แถวรายการ */
+.manage-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 0;
+    border-bottom: 1px solid #e8e8e8;
+    gap: 16px;
+}
+
+.manage-item:last-child {
+    border-bottom: none;
+}
+
+.manage-item-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+}
+
+.manage-item-info .item-icon {
+    color: #333;
+    flex-shrink: 0;
+}
+
+.manage-item-info .item-name {
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: #333;
+    margin: 0;
+}
+
+/* Badge สถานะ */
+.badge-status {
+    display: inline-block;
+    padding: 3px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid;
+    margin-top: 6px;
+}
+
+.badge-enable {
+    color: #2e9e5a;
+    border-color: #2e9e5a;
+    background: rgba(46, 158, 90, 0.08);
+}
+
+.badge-disable {
+    color: #b0b0b0;
+    border-color: #b0b0b0;
+    background: rgba(176, 176, 176, 0.08);
+}
+
+/* กลุ่มปุ่มแอคชัน */
+.manage-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* ปุ่มแก้ไข */
+.btn-edit {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #61BFED;
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-decoration: none;
+}
+
+.btn-edit:hover {
+    background: #3EBCFF;
+    color: #fff;
+}
+
+/* ปุ่มเปิด/ปิดใช้งาน */
+.btn-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    border: 1px solid #999;
+    border-radius: 8px;
+    background: #fff;
+    color: #555;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-toggle:hover {
+    background: #f0f0f0;
+}
+
+.btn-toggle.btn-disable {
+    border-color: #e06060;
+    color: #e06060;
+}
+
+.btn-toggle.btn-disable:hover {
+    background: #fdeaea;
+}
+
+.btn-toggle.btn-enable {
+    border-color: #2e9e5a;
+    color: #2e9e5a;
+}
+
+.btn-toggle.btn-enable:hover {
+    background: #eaf7ef;
+}
+
+/* ปุ่ม FAB (Floating Action Button) มุมล่างขวา */
+.fab-add {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    width: 56px;
+    height: 56px;
+    border: none;
+    border-radius: 14px;
+    background: #FFD740;
+    color: #333;
+    font-size: 28px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: grid;
+    place-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    z-index: 100;
+}
+
+.fab-add:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+/* ผลลัพธ์การค้นหา */
+.search-result-text {
+    padding: 10px 16px;
+    margin-bottom: 8px;
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    color: #888;
+    font-size: 0.95rem;
+}
+
+/* Highlight คำค้นหา */
+.highlight {
+    background: #fff176;
+    padding: 1px 2px;
+    border-radius: 3px;
+}
+
+/* ข้อความไม่พบข้อมูล */
+.no-data {
+    text-align: center;
+    padding: 40px 20px;
+    color: #aaa;
+    font-size: 1.1rem;
+}
+
+/* Group Pill */
+.group-pill {
+    background: #e8e8e8;
+    border-radius: 12px;
+    padding: 2px 14px;
+    font-size: 0.78rem;
+    color: #666;
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+}
+
+/* Filter Pills */
+.filter-btn {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.88rem;
+    text-decoration: none;
+    color: #555;
+    background: #f0f0f0;
+    transition: all 0.2s;
+}
+
+.filter-btn.active {
+    background: #61BFED;
+    color: #fff;
+    font-weight: 500;
+}
+
+/* ===== Modal สำหรับเพิ่ม/แก้ไข ===== */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 200;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-box {
+    background: #fff;
+    border-radius: 16px;
+    padding: 30px;
+    width: 90%;
+    max-width: 480px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    animation: modalIn 0.25s ease;
+}
+
+@keyframes modalIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.modal-box h3 {
+    margin: 0 0 20px;
+    font-size: 1.3rem;
+    color: #333;
+}
+
+.modal-box label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #555;
+}
+
+.modal-box input[type="text"],
+.modal-box input[type="password"],
+.modal-box input[type="number"],
+.modal-box input[type="date"],
+.modal-box input[type="time"],
+.modal-box select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 15px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+    outline: none;
+    background-color: #fff;
+    color: #333;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.modal-box input:focus,
+.modal-box select:focus {
+    border-color: #61BFED;
+    box-shadow: 0 0 0 3px rgba(97, 191, 237, 0.2);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.modal-actions .btn-save {
+    padding: 10px 28px;
+    border: none;
+    border-radius: 10px;
+    background: #61BFED;
+    color: #fff;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.modal-actions .btn-save:hover {
+    background: #3EBCFF;
+}
+
+.modal-actions .btn-cancel {
+    padding: 10px 28px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background: #fff;
+    color: #555;
+    font-family: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.modal-actions .btn-cancel:hover {
+    background: #f0f0f0;
+}
+
+/* Alert แจ้งเตือน */
+.alert-msg {
+    padding: 12px 20px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.alert-success {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.alert-error {
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+/* ===== การ์ดสรุปสถิติ (Stat Cards - อิงตาม admin) ===== */
+.stat-card-link {
+    display: block;
+    text-decoration: none !important;
+    color: inherit;
+    height: 100%;
+}
+
+.stat-card {
+    background-color: #ffffff;
+    border: 1px solid #dcdcdc;
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 100%;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card-link:hover .stat-card {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.stat-card-link:hover .stat-card-inner {
+    filter: brightness(1.05);
+}
+
+.stat-card-inner {
+    background: #61BFED;
+    border-radius: 8px;
+    padding: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #ffffff;
+    height: 100%;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.stat-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: #ffffff;
+}
+
+.stat-subtitle {
+    font-size: 0.95rem;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 400;
+}
+
+.stat-number {
+    font-size: 3.5rem;
+    font-weight: 500;
+    line-height: 1;
+    color: #ffffff;
+    padding-left: 12px;
+}

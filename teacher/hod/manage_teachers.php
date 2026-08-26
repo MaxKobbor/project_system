@@ -41,9 +41,9 @@ function highlightText($text, $search)
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../admin/header.css">
-    <link rel="stylesheet" href="../../admin/nav.css">
-    <link rel="stylesheet" href="../../admin/manage.css">
+    <link rel="stylesheet" href="header.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="nav.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="manage.css?v=<?= time() ?>">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         .avatar-upload-container {

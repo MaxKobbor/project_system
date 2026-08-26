@@ -156,15 +156,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_teacher'])) {
                 mkdir($uploadDir, 0777, true);
             }
             
-            $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-            if (empty($ext)) $ext = 'jpg';
-            $imageName = 'teacher_' . $teacherId . '.' . strtolower($ext);
-            $targetFilePath = $uploadDir . $imageName;
+            $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+            $allowedExts = ['jpg', 'jpeg', 'png', 'webp'];
+            
+            // MIME check
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_file($finfo, $_FILES['image']['tmp_name']);
+            finfo_close($finfo);
+            $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
 
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFilePath)) {
-                // อัปเดตชื่อรูปภาพในตาราง teachers
-                $stmtImg = $pdo->prepare("UPDATE `teachers` SET `image` = ? WHERE `teacher_id` = ?");
-                $stmtImg->execute([$imageName, $teacherId]);
+            if (in_array($ext, $allowedExts) && in_array($mimeType, $allowedMimes) && $_FILES['image']['size'] <= 5 * 1024 * 1024) {
+                $imageName = 'teacher_' . $teacherId . '.' . $ext;
+                $targetFilePath = $uploadDir . $imageName;
+
+                if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFilePath)) {
+                    // อัปเดตชื่อรูปภาพในตาราง teachers
+                    $stmtImg = $pdo->prepare("UPDATE `teachers` SET `image` = ? WHERE `teacher_id` = ?");
+                    $stmtImg->execute([$imageName, $teacherId]);
+                }
             }
         }
 
@@ -190,16 +199,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_teacher'])) {
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
-        $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-        $newImageName = 'teacher_' . $id . '.' . strtolower($ext);
+        $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+        $allowedExts = ['jpg', 'jpeg', 'png', 'webp'];
 
-        // ลบไฟล์รูปเดิมหากมีและชื่อไฟล์ต่างกันหรือส่วนขยายต่างกัน
-        if ($imageName !== '' && file_exists($uploadDir . $imageName)) {
-            unlink($uploadDir . $imageName);
-        }
+        // MIME check
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $_FILES['image']['tmp_name']);
+        finfo_close($finfo);
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
 
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $newImageName)) {
-            $imageName = $newImageName;
+        if (in_array($ext, $allowedExts) && in_array($mimeType, $allowedMimes) && $_FILES['image']['size'] <= 5 * 1024 * 1024) {
+            $newImageName = 'teacher_' . $id . '.' . $ext;
+
+            // ลบไฟล์รูปเดิมหากมีและชื่อไฟล์ต่างกันหรือส่วนขยายต่างกัน
+            if ($imageName !== '' && file_exists($uploadDir . $imageName)) {
+                unlink($uploadDir . $imageName);
+            }
+
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $newImageName)) {
+                $imageName = $newImageName;
+            }
         }
     }
 

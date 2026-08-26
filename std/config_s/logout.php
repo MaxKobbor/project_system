@@ -1,13 +1,10 @@
 <?php
 session_start();
-include "../../config/db.php";
 
 // ล้างค่าและทำลาย Session
-if (isset($_GET['logout'])) {
-    session_unset();
-    session_destroy();
+session_unset();
+session_destroy();
 
-    // Redirect กลับไปที่หน้า home
-    header("Location: ../../login.php");
-    exit();
-}
+// Redirect กลับไปที่หน้าเข้าสู่ระบบ
+header("Location: ../../login.php");
+exit();

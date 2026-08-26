@@ -94,9 +94,11 @@ $members = array_filter([$group['std_1'], $group['std_2'], $group['std_3'], $gro
         }
 
         .detail-main {
-            width: 75%;
+            width: 100%;
+            max-width: 1100px;
             margin: 0 auto;
             padding: 30px 20px;
+            box-sizing: border-box;
         }
 
         .title-bar {

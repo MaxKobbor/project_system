@@ -3,7 +3,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 include_once '../config/db.php';
-session_start();;
+session_start();
 
 // Check if admin is logged in
 if (!isset($_SESSION['admin_id'])) {

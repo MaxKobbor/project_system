@@ -69,9 +69,9 @@ function highlightText($text, $search)
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../admin/header.css">
-    <link rel="stylesheet" href="../../admin/nav.css">
-    <link rel="stylesheet" href="../../admin/manage.css">
+    <link rel="stylesheet" href="header.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="nav.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="manage.css?v=<?= time() ?>">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         .badge-read-only {
@@ -160,7 +160,17 @@ function highlightText($text, $search)
                                         </p>
                                         <p style="font-size:0.83rem; color:#777; margin-bottom:6px;">
                                             <i data-lucide="calendar" style="width:14px;height:14px;display:inline;"></i> วันที่ส่ง: <?= htmlspecialchars($sub['submit_date'] ?? '-') ?> |
-                                            ชื่อไฟล์: <a href="../../uploads/submissions/<?= urlencode($sub['file_name']) ?>" target="_blank" class="text-decoration-underline"><?= highlightText($sub['file_name'], $search) ?></a> <a href="../../uploads/submissions/<?= urlencode($sub['file_name']) ?>" target="_blank" class="btn btn-sm btn-outline-primary ms-2">ดูไฟล์</a>
+                                            <?php if (!empty($sub['file_name'])): ?>
+                                                <?php $ext = strtolower(pathinfo($sub['file_name'], PATHINFO_EXTENSION)); ?>
+                                                <button type="button" class="btn btn-sm btn-outline-primary py-0 px-2" onclick="openFileViewer('../../uploads/submissions/<?= htmlspecialchars($sub['file_name']) ?>', '<?= $ext ?>')">
+                                                    <i data-lucide="eye" style="width:14px;height:14px; margin-right:2px;"></i> ดูไฟล์งาน
+                                                </button>
+                                                <a href="../../uploads/submissions/<?= htmlspecialchars($sub['file_name']) ?>" download class="ms-2 fw-bold text-decoration-none">
+                                                    (ดาวน์โหลด)
+                                                </a>
+                                            <?php else: ?>
+                                                ไม่มีไฟล์
+                                            <?php endif; ?>
                                         </p>
 
                                         <!-- หมายเหตุคอมเมนต์ตรวจงานจากครูผู้สอน -->
@@ -191,9 +201,77 @@ function highlightText($text, $search)
         </main>
     </div>
 
+    <!-- ===== Modal ดูไฟล์งาน ===== -->
+    <div class="modal-overlay" id="fileViewerModal">
+        <div class="modal-box" style="max-width: 90%; width: 1000px; padding: 20px;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0">ตัวอย่างไฟล์งาน</h4>
+                <button type="button" class="btn-close" onclick="closeFileViewer()"></button>
+            </div>
+            
+            <div id="fileViewerContent" style="background:#f8f9fa; border:1px solid #ddd; border-radius:8px; overflow:hidden;">
+                <!-- Iframe or image will be injected here -->
+            </div>
+            
+            <div id="notSupportedMsg" style="display:none; text-align:center; padding: 40px 20px;">
+                <i data-lucide="file-warning" style="width:48px;height:48px; color:#f0ad4e; margin-bottom:10px;"></i>
+                <h5 class="text-secondary">ไม่สามารถเปิดดูไฟล์ประเภทนี้ในเบราว์เซอร์ได้</h5>
+                <p class="text-muted">โปรดดาวน์โหลดไฟล์เพื่อเปิดดูในเครื่องของคุณ</p>
+                <!-- Download link injected here -->
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         lucide.createIcons();
+
+        // File Viewer Functions
+        function openFileViewer(fileUrl, ext) {
+            const viewerContent = document.getElementById('fileViewerContent');
+            const fileViewerModal = document.getElementById('fileViewerModal');
+            const notSupportedMsg = document.getElementById('notSupportedMsg');
+            
+            viewerContent.innerHTML = ''; // clear previous
+            notSupportedMsg.style.display = 'none';
+
+            if (['pdf', 'jpg', 'jpeg', 'png', 'gif'].includes(ext)) {
+                // Supported inline formats
+                const iframe = document.createElement('iframe');
+                iframe.src = fileUrl;
+                iframe.style.width = '100%';
+                iframe.style.height = '70vh';
+                iframe.style.border = 'none';
+                viewerContent.appendChild(iframe);
+            } else {
+                // Not supported for inline viewing (e.g. docx, xlsx)
+                notSupportedMsg.style.display = 'block';
+                const link = document.createElement('a');
+                link.href = fileUrl;
+                link.className = 'btn btn-primary mt-3';
+                link.setAttribute('download', '');
+                link.innerHTML = '<i data-lucide="download" style="width:16px;height:16px;"></i> ดาวน์โหลดไฟล์แทน';
+                notSupportedMsg.appendChild(link);
+                lucide.createIcons();
+            }
+            
+            fileViewerModal.classList.add('active');
+        }
+
+        function closeFileViewer() {
+            document.getElementById('fileViewerModal').classList.remove('active');
+            document.getElementById('fileViewerContent').innerHTML = ''; // clear memory
+        }
+
+        document.getElementById('fileViewerModal').addEventListener('click', function(e) {
+            if (e.target === this) closeFileViewer();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeFileViewer();
+            }
+        });
     </script>
     <script src="nav.js"></script>
 </body>

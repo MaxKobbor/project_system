@@ -214,5 +214,6 @@ function highlightText($text, $search) {
             if (e.key === 'Escape') closeModal();
         });
     </script>
+    <script src="nav.js"></script>
 </body>
 </html>

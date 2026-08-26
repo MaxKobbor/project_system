@@ -212,6 +212,7 @@ function highlightText($text, $search)
                         <input type="text" name="username" id="username" placeholder="ตั้งชื่อกลุ่ม หรือ รหัสนักเรียน" required>
                     </div>
                     <div class="col-md-6 mb-2">
+                        <label for="password">รหัสผ่าน (Password)</label>  
                         <input type="text" name="password" id="password" placeholder="เว้นว่างหากไม่ต้องการเปลี่ยนรหัสผ่าน">
                     </div>
                 </div>
